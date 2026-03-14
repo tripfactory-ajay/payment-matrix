@@ -3,401 +3,246 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TripFactory | Governance & Approval Matrix</title>
+    <title>TripFactory - Simplified Approval Matrix</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 10pt; line-height: 1.4; color: #1a1a1a; background: #f5f5f5; padding: 20px; }
+        .page { max-width: 210mm; margin: 0 auto; background: white; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 40px 20px;
-        }
+        .header { text-align: center; border-bottom: 3px solid #1e3a5f; padding-bottom: 15px; margin-bottom: 20px; }
+        .logo { width: 120px; height: auto; margin-bottom: 15px; }
+        .header h1 { font-size: 18pt; color: #1e3a5f; margin-bottom: 5px; }
+        .header h2 { font-size: 11pt; color: #4a5568; font-weight: normal; margin-bottom: 8px; }
+        .header .meta { font-size: 9pt; color: #666; }
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .section { margin-bottom: 18px; }
+        .section-title { background: #1e3a5f; color: white; padding: 10px 15px; font-size: 12pt; font-weight: 600; margin-bottom: 12px; }
         
-        /* Header */
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
+        .page-break { page-break-before: always; }
         
-        .logo {
-            width: 180px;
-            height: auto;
-            margin-bottom: 20px;
-        }
+        .auto-approve { background: linear-gradient(135deg, #c6f6d5 0%, #9ae6b4 100%); border: 2px solid #38a169; border-radius: 8px; padding: 15px; margin-bottom: 15px; }
+        .auto-approve h3 { color: #22543d; font-size: 12pt; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+        .auto-approve ul { margin-left: 20px; color: #22543d; }
+        .auto-approve li { margin-bottom: 4px; }
         
-        .header h1 {
-            font-size: 2.5rem;
-            color: #1e3a5f;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
+        table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 9.5pt; }
+        thead { background: #2d3748; color: white; }
+        th { padding: 10px 8px; text-align: left; font-weight: 600; border: 1px solid #4a5568; }
+        td { padding: 8px; border: 1px solid #cbd5e0; vertical-align: top; }
+        tbody tr:nth-child(even) { background: #f7fafc; }
         
-        .header h2 {
-            font-size: 1.3rem;
-            color: #4a5568;
-            font-weight: 400;
-            margin-bottom: 15px;
-        }
+        .level-exec { background: #fed7d7; color: #742a2a; font-weight: 700; }
+        .level-1 { background: #c6f6d5; color: #22543d; font-weight: 600; }
+        .level-2 { background: #feebc8; color: #744210; font-weight: 600; }
+        .level-3 { background: #e2e8f0; color: #2d3748; font-weight: 600; }
         
-        .version-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 8px 20px;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
+        .input-box { border: 1px solid #a0aec0; min-height: 20px; min-width: 60px; display: inline-block; background: #fffbeb; padding: 2px 6px; text-align: center; font-weight: 600; color: #c53030; font-size: 10pt; border-radius: 3px; }
+        .placeholder { color: #a0aec0; font-weight: 400; }
         
-        /* Document Cards */
-        .docs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            margin-bottom: 40px;
-        }
+        .note-box { background: #fffaf0; border-left: 4px solid #ed8936; padding: 12px; margin: 12px 0; font-size: 9pt; }
+        .note-box strong { color: #744210; }
         
-        .doc-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            position: relative;
-            overflow: hidden;
-        }
+        .warning-box { background: #fff5f5; border-left: 4px solid #c53030; padding: 12px; margin: 12px 0; font-size: 9pt; }
+        .warning-box strong { color: #742a2a; }
         
-        .doc-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        }
+        .process-box { background: #ebf8ff; border: 1px solid #90cdf4; border-radius: 6px; padding: 12px; margin: 10px 0; }
+        .process-box h4 { color: #2b6cb0; font-size: 10pt; margin-bottom: 8px; }
+        .process-step { display: flex; align-items: center; margin-bottom: 6px; font-size: 9pt; }
+        .process-step .num { width: 22px; height: 22px; background: #3182ce; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 9pt; margin-right: 10px; flex-shrink: 0; }
         
-        .doc-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
-            border-color: #667eea;
-        }
+        .signature-section { margin-top: 25px; border-top: 2px solid #1e3a5f; padding-top: 15px; }
+        .signature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .signature-block { border: 1px solid #cbd5e0; padding: 12px; background: #f7fafc; }
+        .signature-line { border-bottom: 1px solid #1a202c; height: 35px; margin-bottom: 6px; }
+        .signature-label { font-size: 8pt; color: #4a5568; font-weight: 600; }
         
-        .doc-icon {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
+        .footer { margin-top: 20px; text-align: center; font-size: 8pt; color: #718096; border-top: 1px solid #e2e8f0; padding-top: 12px; }
         
-        .doc-card h3 {
-            font-size: 1.3rem;
-            color: #1e3a5f;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
+        .print-btn { position: fixed; top: 20px; right: 20px; background: #1e3a5f; color: white; border: none; padding: 12px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 11pt; z-index: 1000; box-shadow: 0 4px 6px rgba(0,0,0,0.2); }
         
-        .doc-card p {
-            color: #4a5568;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-        
-        .doc-meta {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 20px;
-            font-size: 0.85rem;
-            color: #718096;
-        }
-        
-        .doc-meta span {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .btn {
-            display: inline-block;
-            padding: 12px 25px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            text-align: center;
-            width: 100%;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .btn-secondary {
-            background: #edf2f7;
-            color: #4a5568;
-            margin-top: 10px;
-        }
-        
-        .btn-secondary:hover {
-            background: #e2e8f0;
-        }
-        
-        /* Quick Info Section */
-        .info-section {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-        }
-        
-        .info-section h3 {
-            color: #1e3a5f;
-            font-size: 1.4rem;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .thresholds-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-        
-        .threshold-item {
-            background: #f7fafc;
-            padding: 15px;
-            border-radius: 10px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .threshold-item strong {
-            color: #1e3a5f;
-            display: block;
-            margin-bottom: 5px;
-        }
-        
-        .threshold-item span {
-            color: #4a5568;
-            font-size: 0.9rem;
-        }
-        
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 30px;
-            color: #4a5568;
-            font-size: 0.9rem;
-        }
-        
-        .footer-links {
-            margin-top: 15px;
-        }
-        
-        .footer-links a {
-            color: #667eea;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: 500;
-        }
-        
-        .footer-links a:hover {
-            text-decoration: underline;
-        }
-        
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .docs-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .logo {
-                width: 140px;
-            }
-        }
-        
-        /* Print styles */
         @media print {
-            body {
-                background: white;
-                padding: 20px;
-            }
-            
-            .doc-card {
-                break-inside: avoid;
-                box-shadow: none;
-                border: 1px solid #e2e8f0;
-            }
-            
-            .btn {
-                display: none;
-            }
+            @page { size: A4 portrait; margin: 10mm; }
+            body { background: white; padding: 0; }
+            .page { box-shadow: none; }
+            .no-print { display: none !important; }
+            .level-exec, .level-1, .level-2, .level-3 { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .page-break { page-break-before: always; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
+    <button class="print-btn no-print" onclick="window.print()">🖨️ Print / Save PDF</button>
+    
+    <div class="page">
         <div class="header">
-            <img src="www.orn-logo.png" alt="ORN Logo" class="logo" onerror="this.style.display='none'">
-            <h1>Governance & Approval Matrix</h1>
+            <img src="orn-logo.png" alt="ORN Logo" class="logo">
+            <h1>Simplified Payment & Commitment Approval Matrix</h1>
             <h2>TripFactory / ORN Vacations Pvt. Ltd.</h2>
-            <span class="version-badge">Version 2.0 | Effective March 2026</span>
-        </div>
-
-        <!-- Document Cards -->
-        <div class="docs-grid">
-            <!-- Dashboard -->
-            <div class="doc-card">
-                <div class="doc-icon">⚡</div>
-                <h3>Quick Dashboard</h3>
-                <p>One-page visual reference for daily use. Shows approval flows, limits, and emergency procedures at a glance.</p>
-                <div class="doc-meta">
-                    <span>📄 1 page</span>
-                    <span>🖨️ Print & laminate</span>
-                </div>
-                <a href="approval-dashboard.html" class="btn btn-primary" target="_blank">View Dashboard</a>
-                <a href="approval-dashboard.html" class="btn btn-secondary" onclick="window.print()">Print Version</a>
-            </div>
-
-            <!-- Role Cards -->
-            <div class="doc-card">
-                <div class="doc-icon">🎯</div>
-                <h3>Role Cards</h3>
-                <p>Specific authority cards for Sales, Finance, Operations, and Management teams. Know exactly what you can approve.</p>
-                <div class="doc-meta">
-                    <span>📄 2 pages</span>
-                    <span>👥 Role-specific</span>
-                </div>
-                <a href="role-cards.html" class="btn btn-primary" target="_blank">View Cards</a>
-                <a href="role-cards.html" class="btn btn-secondary" onclick="window.print()">Print Version</a>
-            </div>
-
-            <!-- Master Matrix -->
-            <div class="doc-card">
-                <div class="doc-icon">📋</div>
-                <h3>Master Matrix</h3>
-                <p>Complete policy document with all thresholds, conditions, and Board signature blocks. Legal reference.</p>
-                <div class="doc-meta">
-                    <span>📄 3 pages</span>
-                    <span>⚖️ Legal document</span>
-                </div>
-                <a href="master-approval-matrix.html" class="btn btn-primary" target="_blank">View Matrix</a>
-                <a href="master-approval-matrix.html" class="btn btn-secondary" onclick="window.print()">Print Version</a>
-            </div>
-
-            <!-- Office Playbooks -->
-            <div class="doc-card">
-                <div class="doc-icon">🌍</div>
-                <h3>Office Playbooks</h3>
-                <p>Location-specific guides for India HQ, UK (London), and Dubai offices. Local regulations and contacts.</p>
-                <div class="doc-meta">
-                    <span>📄 3 pages</span>
-                    <span>🌐 India, UK, UAE</span>
-                </div>
-                <a href="office-playbooks.html" class="btn btn-primary" target="_blank">View Playbooks</a>
-                <a href="office-playbooks.html" class="btn btn-secondary" onclick="window.print()">Print Version</a>
+            <div class="meta">
+                Effective: <span class="input-box" contenteditable="true"><span class="placeholder">DD/MM/YYYY</span></span> | 
+                Version: <span contenteditable="true">3.0-Simplified</span> | 
+                Classification: Internal
             </div>
         </div>
 
-        <!-- Quick Reference -->
-        <div class="info-section">
-            <h3>🚨 Critical Thresholds - Board Approval Required</h3>
-            <div class="thresholds-grid">
-                <div class="threshold-item">
-                    <strong>Financial Commitments</strong>
-                    <span>Any payment or contract exceeding $5,000</span>
+        <!-- SECTION 1: TRIP-RELATED -->
+        <div class="section">
+            <div class="section-title">1. Trip-Related Commitments</div>
+            
+            <div class="auto-approve">
+                <h3>✅ AUTO-APPROVED</h3>
+                <p style="margin-bottom: 8px; color: #22543d;"><strong>Any payment or commitment linked to a confirmed TripFactory booking reference is automatically approved.</strong></p>
+                <ul>
+                    <li>Must include valid TF booking reference number</li>
+                    <li>Must be standard operational expense (hotels, flights, transfers, activities)</li>
+                    <li>Must be within standard supplier terms</li>
+                    <li>Exception: New DMC agreements still require Board approval regardless of amount</li>
+                </ul>
+            </div>
+
+            <div class="process-box">
+                <h4>Process for Trip-Related Payments:</h4>
+                <div class="process-step"><div class="num">1</div>Verify booking reference exists in system</div>
+                <div class="process-step"><div class="num">2</div>Confirm supplier is approved (existing contract)</div>
+                <div class="process-step"><div class="num">3</div>Process payment with booking reference quoted</div>
+                <div class="process-step"><div class="num">4</div>Finance reviews monthly exception report</div>
+            </div>
+        </div>
+
+        <!-- SECTION 2: NON-TRIP APPROVAL MATRIX -->
+        <div class="section">
+            <div class="section-title">2. Non-Trip-Related Commitments</div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 18%;">Approval Level</th>
+                        <th style="width: 22%;">Authority Limit</th>
+                        <th style="width: 30%;">Who Can Approve</th>
+                        <th style="width: 30%;">Examples / Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="level-3"><strong>Level 3</strong></td>
+                        <td>Up to $<span class="input-box" contenteditable="true"><span class="placeholder">500</span></span></td>
+                        <td contenteditable="true">Department Heads<br>Team Leaders</td>
+                        <td>Office supplies, small tools, minor repairs, taxi fares, team lunches</td>
+                    </tr>
+                    <tr>
+                        <td class="level-2"><strong>Level 2</strong></td>
+                        <td>Up to $<span class="input-box" contenteditable="true"><span class="placeholder">1,000</span></span></td>
+                        <td contenteditable="true">Senior Managers<br>Functional Heads</td>
+                        <td>Equipment purchases, training courses, software subscriptions, marketing materials</td>
+                    </tr>
+                    <tr>
+                        <td class="level-1"><strong>Level 1</strong></td>
+                        <td>Up to $<span class="input-box" contenteditable="true"><span class="placeholder">2,000</span></span></td>
+                        <td contenteditable="true">Country Heads<br>Department Directors</td>
+                        <td>Annual contracts, professional services, event sponsorships, recruitment fees</td>
+                    </tr>
+                    <tr>
+                        <td class="level-exec"><strong>Executive Board</strong><br>(Single Member)</td>
+                        <td>Up to $<span class="input-box" contenteditable="true"><span class="placeholder">20,000</span></span></td>
+                        <td contenteditable="true">Any Board Member<br>CEO / COO / CFO</td>
+                        <td>Major contracts, technology investments, office leases, senior hires</td>
+                    </tr>
+                    <tr>
+                        <td class="level-exec"><strong>Executive Board</strong><br>(Dual Approval)</td>
+                        <td>Above $<span class="input-box" contenteditable="true"><span class="placeholder">20,000</span></span></td>
+                        <td contenteditable="true">Two Board Members<br>Must include CEO or Chairman</td>
+                        <td>Acquisitions, major investments, multi-year contracts, new office openings</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGE BREAK BEFORE SECTION 3 -->
+        <div class="page-break"></div>
+
+        <!-- SECTION 3: ALWAYS BOARD -->
+        <div class="section">
+            <div class="section-title">3. Always Requires Board Approval (Regardless of Amount)</div>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 40%;">Category</th>
+                        <th style="width: 30%;">Requirement</th>
+                        <th style="width: 30%;">Approver</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>DMC Agreements</strong></td>
+                        <td>All new Destination Management Company contracts</td>
+                        <td class="level-exec">Board (Dual)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Acquisitions / Investments</strong></td>
+                        <td>Purchase of businesses, assets, equity stakes</td>
+                        <td class="level-exec">Board (Dual)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>New Office Openings</strong></td>
+                        <td>UK, Dubai, or any new geographic location</td>
+                        <td class="level-exec">Board (Dual)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Banking Changes</strong></td>
+                        <td>New accounts, signatory changes, mandates</td>
+                        <td class="level-exec">Board (Dual)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Executive Compensation</strong></td>
+                        <td>Salaries above $<span class="input-box" contenteditable="true"><span class="placeholder">5,000</span></span>/month</td>
+                        <td class="level-exec">Board (Single)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Legal / Litigation</strong></td>
+                        <td>Any court cases, settlements, arbitration</td>
+                        <td class="level-exec">Board (Dual)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="warning-box">
+                <strong>Self-Approval Prohibited:</strong> No individual may approve their own expenses, salary increases, or benefits. All such requests must be approved by the next higher level.
+            </div>
+        </div>
+
+        <!-- SECTION 4: EMERGENCY -->
+        <div class="section">
+            <div class="section-title">4. Emergency Override Procedure</div>
+            
+            <div class="process-box">
+                <p style="margin-bottom: 8px;"><strong>In genuine emergencies where delay would cause material harm to the business:</strong></p>
+                <div class="process-step"><div class="num">1</div>Any Level 1 approver or above may authorize up to $<span class="input-box" contenteditable="true"><span class="placeholder">5,000</span></span> verbally</div>
+                <div class="process-step"><div class="num">2</div>Written justification must be submitted within 24 hours</div>
+                <div class="process-step"><div class="num">3</div>Board ratification required within 48 hours</div>
+                <div class="process-step"><div class="num">4</div>Finance maintains emergency override log</div>
+            </div>
+        </div>
+
+        <!-- SIGNATURES -->
+        <div class="signature-section">
+            <p style="font-size: 9pt; margin-bottom: 12px;">This Simplified Approval Matrix is adopted by the Board of Directors of ORN Vacations Pvt. Ltd.:</p>
+            
+            <div class="signature-grid">
+                <div class="signature-block">
+                    <div class="signature-line"></div>
+                    <div class="signature-label">Chairman / Managing Director<br>Date: ____________</div>
                 </div>
-                <div class="threshold-item">
-                    <strong>DMC Agreements</strong>
-                    <span>All Destination Management Company contracts</span>
-                </div>
-                <div class="threshold-item">
-                    <strong>Acquisitions</strong>
-                    <span>Any M&A activity, asset purchases, investments</span>
-                </div>
-                <div class="threshold-item">
-                    <strong>Executive Compensation</strong>
-                    <span>Salaries above $5,000/month or CXO level</span>
-                </div>
-                <div class="threshold-item">
-                    <strong>Long-term Contracts</strong>
-                    <span>Any commitment exceeding 6 months duration</span>
-                </div>
-                <div class="threshold-item">
-                    <strong>New Offices</strong>
-                    <span>Opening UK, Dubai, or other new locations</span>
-                </div>
-                <div class="threshold-item">
-                    <strong>Banking Changes</strong>
-                    <span>New accounts, signatory changes, mandates</span>
-                </div>
-                <div class="threshold-item">
-                    <strong>Legal Matters</strong>
-                    <span>Litigation, arbitration, settlements</span>
+                <div class="signature-block">
+                    <div class="signature-line"></div>
+                    <div class="signature-label">Chief Executive Officer<br>Date: ____________</div>
                 </div>
             </div>
         </div>
 
-        <!-- Approval Tiers -->
-        <div class="info-section">
-            <h3>📊 Approval Tiers Overview</h3>
-            <div class="thresholds-grid">
-                <div class="threshold-item" style="border-left-color: #48bb78;">
-                    <strong>Tier 1: Department Head</strong>
-                    <span>Up to $2,000 • Email approval OK • Day-to-day operational decisions</span>
-                </div>
-                <div class="threshold-item" style="border-left-color: #ed8936;">
-                    <strong>Tier 2: Local Manager</strong>
-                    <span>$2,001 - $5,000 • Written approval required • Dual signatory >$2,000</span>
-                </div>
-                <div class="threshold-item" style="border-left-color: #e53e3e;">
-                    <strong>Tier 3: Board</strong>
-                    <span>Above $5,000 • Board resolution required • Pre-approval mandatory</span>
-                </div>
-            </div>
-        </div>
-
-        <!-- Footer -->
         <div class="footer">
-            <p><strong>Document Owner:</strong> Company Secretary | <strong>Next Review:</strong> March 2027</p>
-            <p>When in doubt, escalate. Emergency override available with post-facto ratification.</p>
-            <div class="footer-links">
-                <a href="approval-dashboard.html">Dashboard</a>
-                <a href="role-cards.html">Role Cards</a>
-                <a href="master-approval-matrix.html">Master Matrix</a>
-                <a href="office-playbooks.html">Playbooks</a>
-            </div>
-            <p style="margin-top: 20px; font-size: 0.85rem; color: #718096;">
-                © 2026 ORN Vacations Pvt. Ltd. (TripFactory). Confidential - Internal Use Only.
-            </p>
+            <p><strong>Document Owner:</strong> Company Secretary | <strong>Next Review:</strong> <span contenteditable="true">March 2027</span></p>
+            <p>When in doubt, escalate. Questions: company.secretary@tripfactory.com</p>
         </div>
     </div>
 </body>
